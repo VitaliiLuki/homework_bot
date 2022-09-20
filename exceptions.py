@@ -1,0 +1,2 @@
+class NotSendMessageError(BaseException):
+    pass
