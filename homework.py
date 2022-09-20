@@ -119,7 +119,7 @@ def main():
                     previous_message = message
                     logging.info('Обновлен статус проверки работы')
                 else:
-                    logging.info(f'Статус проверки работы не изменился.')
+                    logging.info('Статус проверки работы не изменился.')
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             logging.error(
@@ -132,11 +132,11 @@ def main():
 
 if __name__ == '__main__':
     logging.basicConfig(
-    level=logging.DEBUG,
-    filename='main.log',
-    filemode='w',
-    format='%(asctime)s, %(levelname)s, %(message)s, %(name)s',
-)
+        level=logging.DEBUG,
+        filename='main.log',
+        filemode='w',
+        format='%(asctime)s, %(levelname)s, %(message)s, %(name)s',
+    )
 
     logging.debug('Запуск программы')
     logging.info('Небходимая информация')
