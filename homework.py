@@ -18,7 +18,7 @@ logging.debug('Запуск программы')
 logging.info('Небходимая информация')
 logging.warning('Большая нагрузка!')
 logging.error('Бот не смог отправить сообщение')
-logging.critical('Критическая ошибка!') 
+logging.critical('Критическая ошибка!')
 
 
 load_dotenv()
@@ -27,7 +27,7 @@ load_dotenv()
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_SECRET_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_SECRET_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_SECRET_ID')
-TEST_TIME = 1209600*2
+TEST_TWO_WEEKS_TIME = 1209600
 RETRY_TIME = 600
 
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
@@ -52,7 +52,7 @@ def check_response(response):
             raise TypeError(
                 'Значения по ключу "homeworks" не соответствуют типу "list".'
             )
-        logging.info(f'Проверка наличия ключа "homeworks" прошла успешно.')
+        logging.info('Проверка наличия ключа "homeworks" прошла успешно.')
         return response.get('homeworks')
     logging.error('Ответ от API не содержит ключа "homeworks".')
     raise KeyError('Ответ от API не содержит ключа "homeworks".')
@@ -79,21 +79,23 @@ def get_api_answer(current_timestamp):
         return response.json()
     else:
         logging.error(f'Эндпоинт: {ENDPOINT} не доступен.')
-        raise ConnectionError(f'{response.status_code}: нет доcтупа к эндпоинту.')
+        raise ConnectionError(
+            f'{response.status_code}: нет доcтупа к эндпоинту.'
+        )
 
 
 def parse_status(homework):
     """Извлечение информации о статусе проверки и названии домашней работы."""
     if not isinstance(homework, dict):
-        logging.error(f'homework не является словарем!')
+        logging.error('homework не является словарем!')
         raise TypeError('homework не является словарем!')
     homework_name = homework.get('homework_name')
     if homework_name is None:
-        logging.error(f'У homework нет имени')
+        logging.error('У homework нет имени')
         raise KeyError('У homework нет имени')
     homework_status = homework.get('status')
     if homework_status is None:
-        logging.error(f'У homework нет статуса')
+        logging.error('У homework нет статуса')
         raise KeyError('У homework нет статуса')
     verdict = HOMEWORK_STATUSES.get(homework_status)
     if verdict is None:
