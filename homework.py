@@ -47,8 +47,7 @@ def check_response(response):
 
 def check_tokens():
     """Проверка наличия необходимых переменных окружения."""
-    if all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID]):
-        return True
+    return all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID])
 
 
 def get_api_answer(current_timestamp):
@@ -103,11 +102,12 @@ def send_message(bot, message):
 def main():
     """Основная логика работы бота."""
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    current_timestamp = int(time.time() - ONE_WEEK_BEFORE_CURRENT_TIME)
+    current_timestamp = int(time.time())
     if check_tokens() is False:
         logging.critical('Отсутствует один или несколько токенов!')
-        sys.exit([0])
+        sys.exit(0)
     previous_message = ''
+    error_message=''
     while True:
         try:
             response = get_api_answer(current_timestamp)
@@ -122,10 +122,14 @@ def main():
                     logging.info('Статус проверки работы не изменился.')
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
-            logging.error(
+            if error_message != message:
+                logging.error(
                 f'При попытке отправки сообщения возникла ошибка - {error}'
-            )
-            send_message(bot, message)
+                )
+                send_message(bot, message)
+                error_message = message
+            else:
+                logging.error(f'Ошибка при повторной отправке сообщения: {error}')
         finally:
             time.sleep(RETRY_TIME)
 
