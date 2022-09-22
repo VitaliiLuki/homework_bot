@@ -107,7 +107,7 @@ def main():
         logging.critical('Отсутствует один или несколько токенов!')
         sys.exit(0)
     previous_message = ''
-    error_message=''
+    error_message = ''
     while True:
         try:
             response = get_api_answer(current_timestamp)
@@ -124,12 +124,14 @@ def main():
             message = f'Сбой в работе программы: {error}'
             if error_message != message:
                 logging.error(
-                f'При попытке отправки сообщения возникла ошибка - {error}'
+                    f'При попытке отправки сообщения возникла ошибка - {error}'
                 )
                 send_message(bot, message)
                 error_message = message
             else:
-                logging.error(f'Ошибка при повторной отправке сообщения: {error}')
+                logging.error(
+                    f'Ошибка при повторной отправке сообщения: {error}'
+                )
         finally:
             time.sleep(RETRY_TIME)
 
