@@ -90,7 +90,7 @@ def send_message(bot, message):
         bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
         logging.info('Сообщение отправлено!')
     except telegram.error.TelegramError as error:
-        raise exceptions.NotSendMessageError('Ошибка отправки сообщения!')
+        raise exceptions.NotSendMessageError(f'Ошибка отправки сообщения: {error}')
 
 
 def main():
