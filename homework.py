@@ -60,7 +60,6 @@ def get_api_answer(current_timestamp):
         params=params,
     )
     if response.status_code != HTTPStatus.OK:
-        logging.error(f'Эндпоинт: {ENDPOINT} не доступен.')
         raise ConnectionError(
             f'{response.status_code}: нет доcтупа к эндпоинту.'
         )
@@ -71,19 +70,15 @@ def get_api_answer(current_timestamp):
 def parse_status(homework):
     """Извлечение информации о статусе проверки и названии домашней работы."""
     if not isinstance(homework, dict):
-        logging.error('homework не является словарем!')
         raise TypeError('homework не является словарем!')
     homework_name = homework.get('homework_name')
     if homework_name is None:
-        logging.error('У homework нет имени')
         raise KeyError('У homework нет имени')
     homework_status = homework.get('status')
     if homework_status is None:
-        logging.error('У homework нет статуса')
         raise KeyError('У homework нет статуса')
     verdict = HOMEWORK_STATUSES.get(homework_status)
     if verdict is None:
-        logging.error(f'Ошибка статуса homework: {verdict}')
         raise KeyError(f'Ошибка статуса homework : {verdict}')
     logging.info(f'Новый статус {verdict}')
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
@@ -95,14 +90,13 @@ def send_message(bot, message):
         bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
         logging.info('Сообщение отправлено!')
     except telegram.error.TelegramError as error:
-        logging.error(f'Ошибка отправки: {error}!')
         raise exceptions.NotSendMessageError('Ошибка отправки сообщения!')
 
 
 def main():
     """Основная логика работы бота."""
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    current_timestamp = int(time.time())
+    current_timestamp = int(time.time() - ONE_WEEK_BEFORE_CURRENT_TIME)
     if check_tokens() is False:
         logging.critical('Отсутствует один или несколько токенов!')
         sys.exit(0)
@@ -141,13 +135,8 @@ if __name__ == '__main__':
         level=logging.DEBUG,
         filename='main.log',
         filemode='w',
-        format='%(asctime)s, %(levelname)s, %(message)s, %(name)s',
+        format='%(asctime)s, %(levelname)s, %(message)s,'
+        '%(name)s, %(funcName)s ,%(lineno)s'
     )
-
-    logging.debug('Запуск программы')
-    logging.info('Небходимая информация')
-    logging.warning('Большая нагрузка!')
-    logging.error('Бот не смог отправить сообщение')
-    logging.critical('Критическая ошибка!')
 
     main()
